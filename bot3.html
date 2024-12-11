@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Theory Fashion & Makeup Bot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Color Theory Fashion & Makeup Bot</h1>
+    <div class="container">
+        <form id="colorTheoryForm">
+            <label for="name">What's your name?</label>
+            <input type="text" id="name" required>
+            
+            <label for="age">How old are you?</label>
+            <input type="number" id="age" required>
+            
+            <label for="region">What region do you belong to? (e.g., Asia, Europe, North America)</label>
+            <input type="text" id="region" required>
+            
+            <label for="country">What country do you belong from?</label>
+            <input type="text" id="country" required>
+            
+            <label for="height">How tall are you approximately (in cm)?</label>
+            <input type="number" id="height" required>
+            
+            <label for="hex_color">Enter your skin color in hex format (e.g., #e4af83):</label>
+            <input type="text" id="hex_color" required>
+            
+            <label for="aesthetic">Choose your aesthetic style:</label>
+            <select id="aesthetic">
+                <option value="clean girl">Clean Girl</option>
+                <option value="hot mess">Hot Mess</option>
+                <option value="indie">Indie</option>
+                <option value="vintage">Vintage</option>
+                <option value="chic">Chic</option>
+                <option value="boho">Boho</option>
+                <option value="minimalist">Minimalist</option>
+                <option value="streetwear">Streetwear</option>
+            </select>
+            
+            <button type="button" onclick="submitForm()">Submit</button>
+        </form>
+
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Convert hex to RGB
+        function hexToRgb(hexColor) {
+            hexColor = hexColor.replace('#', '');
+            if (hexColor.length === 6) {
+                var r = parseInt(hexColor.substring(0, 2), 16);
+                var g = parseInt(hexColor.substring(2, 4), 16);
+                var b = parseInt(hexColor.substring(4, 6), 16);
+                return { r, g, b };
+            } else {
+                alert("Invalid hex color code.");
+                return null;
+            }
+        }
+
+        // Determine undertone
+        function determineUndertone(r, g, b) {
+            if (r > g && r > b) {
+                return "warm";
+            } else if (b > r && b > g) {
+                return "cool";
+            } else {
+                return "neutral";
+            }
+        }
+
+        // Suggest fashion colors based on undertone
+        function suggestFashionColors(undertone) {
+            if (undertone === "warm") {
+                return ["Earthy tones (terracotta, mustard, burnt orange)", "Warm reds and corals", "Olive greens and browns"];
+            } else if (undertone === "cool") {
+                return ["Cool tones (blues, purples)", "Emerald green", "Crisp whites and cool greys"];
+            } else {
+                return ["Jewel tones (emerald, sapphire, ruby)", "Soft pastels", "Neutral shades (beige, taupe)"];
+            }
+        }
+
+        // Suggest makeup colors based on undertone
+        function suggestMakeupColors(undertone) {
+            if (undertone === "warm") {
+                return ["Peach or coral blush", "Bronze or gold eyeshadow", "Warm red or coral lipstick"];
+            } else if (undertone === "cool") {
+                return ["Pink or mauve blush", "Silver or cool-toned eyeshadow", "Cool red or berry lipstick"];
+            } else {
+                return ["Soft peach blush", "Neutral eyeshadows (brown, taupe)", "Nude or soft pink lipstick"];
+            }
+        }
+
+        // Determine aesthetic based on region, country and user input
+        function determineAesthetic(region, country, selectedAesthetic) {
+            if (selectedAesthetic) {
+                return selectedAesthetic; // Use selected aesthetic directly
+            }
+
+            // Fallback based on region and country if no aesthetic selected
+            if (["asia", "africa"].includes(region.toLowerCase())) {
+                return "Bohemian, earthy tones with vibrant accents";
+            } else if (["europe", "north america"].includes(region.toLowerCase())) {
+                return "Minimalistic, elegant, and versatile with a mix of neutral and bold tones";
+            } else {
+                return "Eclectic, fusion of traditional and modern styles";
+            }
+        }
+
+        // Submit form and process data
+        function submitForm() {
+            var name = document.getElementById("name").value;
+            var age = document.getElementById("age").value;
+            var region = document.getElementById("region").value;
+            var country = document.getElementById("country").value;
+            var height = document.getElementById("height").value;
+            var hexColor = document.getElementById("hex_color").value;
+            var selectedAesthetic = document.getElementById("aesthetic").value;
+
+            if (hexColor && region && country && name && age && height) {
+                var rgb = hexToRgb(hexColor);
+                if (rgb) {
+                    var undertone = determineUndertone(rgb.r, rgb.g, rgb.b);
+                    var aesthetic = determineAesthetic(region, country, selectedAesthetic);
+                    var fashionColors = suggestFashionColors(undertone);
+                    var makeupColors = suggestMakeupColors(undertone);
+
+                    var resultText = `<strong>${name}</strong>, aged ${age}, from ${country}, with an approximate height of ${height} cm.<br>`;
+                    resultText += `Your chosen aesthetic style is: <strong>${aesthetic}</strong><br><br>`;
+                    resultText += "<strong>Fashion Recommendations for Your Skin Tone:</strong><ul>";
+                    fashionColors.forEach(function(color) {
+                        resultText += `<li>${color}</li>`;
+                    });
+                    resultText += "</ul><br><strong>Makeup Recommendations for Your Skin Tone:</strong><ul>";
+                    makeupColors.forEach(function(color) {
+                        resultText += `<li>${color}</li>`;
+                    });
+                    resultText += "</ul><br>Thank you for using the Color Theory Fashion and Makeup Bot!<br>We hope this helps you discover your perfect style!";
+
+                    document.getElementById("result").style.display = "block";
+                    document.getElementById("result").innerHTML = resultText;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
